@@ -3,6 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from profiles_api import serializers
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+
+
+from profiles_api import models
+from profiles_api import permissions
 
 
 class HelloAPIView(APIView):
@@ -79,9 +84,9 @@ class HelloViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-     def retrive(self,request,pk=None):
-         """Handle getting an object by its ID"""
-         return Response({'http_method':'GET'})
+    def retrive(self,request,pk=None):
+        """Handle getting an object by its ID"""
+        return Response({'http_method':'GET'})
 
     def update(self,request,pk=None):
         """Handle Updating An Object"""
@@ -94,3 +99,12 @@ class HelloViewSet(viewsets.ViewSet):
     def destroy(self,request,pk=None):
         """Handle Removing An Object"""
         return Response({'http_method':'DELETE'})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle Creating And Updating Profiles"""
+
+    serializer_class=serializers.UserProfileSerializer
+    queryset=models.UserProfile.objects.all()
+    authentication_classes=(TokenAuthentication,)
+    permission_classes=(permissions.UpdateOwnProfile,)
